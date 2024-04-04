@@ -20,6 +20,7 @@ class DataStream:
 
         self.chain = []
         self.last = self.p
+        self.count = 0
 
     def stream(self, freq=20):
         while True:
@@ -58,9 +59,9 @@ def update_graph(num):
     p, chain, dt = next(data_stream())
     graph._offsets3d = (p[0], p[1], p[2])
     title.set_text(f'dt = {dt:.3E}')
-    #line, = ax.plot(chain[:,0,0], chain[:,1,0], chain[:,0,2], alpha=0.1)
 
 if __name__ == '__main__':
+    n_frames = 200
     np.random.seed(0)
     data_stream = DataStream().stream
 
@@ -74,8 +75,16 @@ if __name__ == '__main__':
     p, chain, dt = next(data_stream())
     graph = ax.scatter(p[0], p[1], p[2])
     title = ax.set_title(f'{dt:.3E}')
-    #line, = ax.plot3D(chain[:,0,0], chain[:,1,0], chain[:,0,2], alpha=0.1)
 
-    ani = animation.FuncAnimation(fig, update_graph, interval=40, blit=False)
-
+    ani = animation.FuncAnimation(
+        fig,
+        update_graph,
+        interval=40,
+        blit=False,
+        save_count=n_frames,
+    )
     plt.show()
+
+    # save animation as gif
+    print('saving gif...')
+    ani.save('nbody.gif', writer='imagemagick', fps=15)
